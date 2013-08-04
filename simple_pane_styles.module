@@ -1,0 +1,90 @@
+<?php
+/**
+ * @file
+ * Easily create Panels pane styles
+ */
+
+/**
+ * Implements hook_init().
+ */
+function simple_pane_styles_init() {
+  _simple_pane_styles_get_styles();
+}
+
+/**
+ * Implements hook_theme()
+ */
+function simple_pane_styles_theme() {
+  $theme = array();
+
+  $styles = _simple_pane_styles_get_styles();
+  foreach ($styles as $name => $style) {
+    $theme['panels_pane_style__' . $name] = array(
+      'variables' => array('css_id' => NULL, 'content' => NULL, 'settings' => NULL, 'display' => NULL, 'layout' => NULL, 'renderer' => NULL),
+      'template' => $style['template'],
+      'path' => $style['path'],
+    );
+  }
+
+  return $theme;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function simple_pane_styles_form_panels_edit_style_type_form_alter(&$form, $form_state, $form_id) {
+  // Add custom simple pane styles to style options.
+  $style_options = _simple_pane_styles_get_styles_options();
+  $form['style']['#options'] += $style_options;
+}
+
+/**
+ * Implements hook_preprocess_panels_pane().
+ */
+function simple_pane_styles_preprocess_panels_pane(&$variables) {
+  $pane = $variables['pane'];
+  if (isset($pane->style['style'])) {
+    $style = $pane->style['style'];
+    $simple_pane_styles = _simple_pane_styles_get_styles();
+
+    if (array_key_exists($style, $simple_pane_styles)) {
+      $variables['theme_hook_suggestions'][] = 'panels_pane_style__' . $style;
+    } 
+  }
+}
+
+/**
+ * Returns a list of pane styles.
+ */
+function _simple_pane_styles_get_styles() {
+  $styles = array();
+  
+  foreach (module_implements('simple_pane_styles') as $module) {
+    $module_styles = module_invoke($module, 'simple_pane_styles');
+    foreach ($module_styles as $name => $style) {
+
+      // Add some info about this style.
+      $style['module'] = $module;
+      $style['path'] = drupal_get_path('module', $module) . '/templates/panes/styles/';
+      $style['template'] = str_replace('_', '-', 'panels_pane_style__' . $name);
+
+      $styles[$name] = $style;
+    }
+  }
+
+  return $styles;
+}
+
+/**
+ * Returns an #options ready styles array.
+ */
+function _simple_pane_styles_get_styles_options() {
+  $options = array();
+  $styles = _simple_pane_styles_get_styles();
+
+  foreach ($styles as $name => $style) {
+    $options[$name] = $style['title'];
+  }
+
+  return $options;
+}

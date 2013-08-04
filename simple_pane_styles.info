@@ -1,0 +1,5 @@
+name = Simple Pane Styles
+description = Easily create Panels pane styles
+core = 7.x
+
+dependencies[] = panels
