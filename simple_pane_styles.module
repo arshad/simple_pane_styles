@@ -59,6 +59,7 @@ function simple_pane_styles_preprocess_panels_pane(&$variables) {
 function _simple_pane_styles_get_styles() {
   $styles = array();
   
+  // Get pane styles from modules.
   foreach (module_implements('simple_pane_styles') as $module) {
     $module_styles = module_invoke($module, 'simple_pane_styles');
     foreach ($module_styles as $name => $style) {
@@ -70,6 +71,24 @@ function _simple_pane_styles_get_styles() {
 
       $styles[$name] = $style;
     }
+  }
+
+  // Get pane styles from current theme.
+  $current_theme = variable_get('theme_default', 'bartik');
+  $current_theme_path = drupal_get_path('theme', $current_theme);
+  $current_theme_info = drupal_parse_info_file($current_theme_path . '/' . $current_theme . '.info');
+  $theme_pane_styles = $current_theme_info['pane_styles'];
+
+  foreach ($theme_pane_styles as $name => $title) {
+    $style = array();
+
+    // Add some info about this style.
+    $style['title'] = $title;
+    $style['theme'] = $current_theme;
+    $style['path'] = $current_theme_path . '/templates/panes/styles/';
+    $style['template'] = str_replace('_', '-', 'panels_pane_style__' . $name);
+
+    $styles[$name] = $style;
   }
 
   return $styles;
