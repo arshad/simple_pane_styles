@@ -5,13 +5,6 @@
  */
 
 /**
- * Implements hook_init().
- */
-function simple_pane_styles_init() {
-  _simple_pane_styles_get_styles();
-}
-
-/**
  * Implements hook_theme()
  */
 function simple_pane_styles_theme() {
@@ -77,18 +70,19 @@ function _simple_pane_styles_get_styles() {
   $current_theme = variable_get('theme_default', 'bartik');
   $current_theme_path = drupal_get_path('theme', $current_theme);
   $current_theme_info = drupal_parse_info_file($current_theme_path . '/' . $current_theme . '.info');
-  $theme_pane_styles = $current_theme_info['pane_styles'];
+  if (isset($current_theme_info['pane_styles'])) {
+    $theme_pane_styles = $current_theme_info['pane_styles'];
+    foreach ($theme_pane_styles as $name => $title) {
+      $style = array();
 
-  foreach ($theme_pane_styles as $name => $title) {
-    $style = array();
+      // Add some info about this style.
+      $style['title'] = $title;
+      $style['theme'] = $current_theme;
+      $style['path'] = $current_theme_path . '/templates/panes/styles/';
+      $style['template'] = str_replace('_', '-', 'panels_pane_style__' . $name);
 
-    // Add some info about this style.
-    $style['title'] = $title;
-    $style['theme'] = $current_theme;
-    $style['path'] = $current_theme_path . '/templates/panes/styles/';
-    $style['template'] = str_replace('_', '-', 'panels_pane_style__' . $name);
-
-    $styles[$name] = $style;
+      $styles[$name] = $style;
+    }
   }
 
   return $styles;
