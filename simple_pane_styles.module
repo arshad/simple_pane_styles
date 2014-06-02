@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Easily create Panels pane styles
+ * Easily create Panels pane styles.
  */
 
 /**
@@ -13,7 +13,14 @@ function simple_pane_styles_theme() {
   $styles = _simple_pane_styles_get_styles();
   foreach ($styles as $name => $style) {
     $theme['panels_pane_style__' . $name] = array(
-      'variables' => array('css_id' => NULL, 'content' => NULL, 'settings' => NULL, 'display' => NULL, 'layout' => NULL, 'renderer' => NULL),
+      'variables' => array(
+        'css_id' => NULL,
+        'content' => NULL,
+        'settings' => NULL,
+        'display' => NULL,
+        'layout' => NULL,
+        'renderer' => NULL
+      ),
       'template' => $style['template'],
       'path' => $style['path'],
     );
@@ -40,6 +47,7 @@ function simple_pane_styles_preprocess_panels_pane(&$variables) {
     $style = $pane->style['style'];
     $simple_pane_styles = _simple_pane_styles_get_styles();
 
+    // Add a custom template for the style.
     if (array_key_exists($style, $simple_pane_styles)) {
       $variables['theme_hook_suggestions'][] = 'panels_pane_style__' . $style;
     } 
