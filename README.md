@@ -11,4 +11,4 @@ Create simple Panels pane styles from your theme..
 
 2. Create your style template in templates/panes/styles.
 
-Example: for a blue_background style, create a panels-pane-style--blue-background.tpl.php.
+Example: for a blue_background style, create a panels-pane--blue-background.tpl.php.

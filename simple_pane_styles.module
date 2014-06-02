@@ -49,7 +49,7 @@ function simple_pane_styles_preprocess_panels_pane(&$variables) {
 
     // Add a custom template for the style.
     if (array_key_exists($style, $simple_pane_styles)) {
-      $variables['theme_hook_suggestions'][] = 'panels_pane_style__' . $style;
+      $variables['theme_hook_suggestions'][] = 'panels_pane__' . $style;
     } 
   }
 }
